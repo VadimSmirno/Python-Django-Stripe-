@@ -1,0 +1,22 @@
+version: 23.0.1
+
+services:
+  back:
+    build: .
+    command: sh -c "python3 manage.py migrate && gunicorn payments_app.wsgi:application --workers 2 --bind 0.0.0.0:8080"
+    restart: always
+    env_file:
+      - .env
+
+
+
+  nginx:
+    image: nginx:1.19.3
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./django_static/:/usr/share/nginx/html/django_static
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: always
+
+
